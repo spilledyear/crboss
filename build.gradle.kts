@@ -11,13 +11,17 @@ repositories {
 // 依赖使用阿里云 maven 源
     maven {
         setUrl("https://maven.aliyun.com/repository/public/")
-        setAllowInsecureProtocol(false)
+        isAllowInsecureProtocol = false
     }
     maven {
         setUrl("https://maven.aliyun.com/repository/spring/")
-        setAllowInsecureProtocol(false)
+        isAllowInsecureProtocol = false
     }
     mavenCentral()
+}
+
+dependencies {
+    implementation("org.gitlab4j:gitlab4j-api:4.19.0")
 }
 
 // Configure Gradle IntelliJ Plugin
@@ -34,6 +38,7 @@ tasks {
     withType<JavaCompile> {
         sourceCompatibility = "11"
         targetCompatibility = "11"
+        options.encoding = "UTF-8"
     }
 
     patchPluginXml {
