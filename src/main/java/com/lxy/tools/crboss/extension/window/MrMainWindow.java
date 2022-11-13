@@ -51,8 +51,8 @@ public class MrMainWindow {
         this.project = project;
         this.toolWindow = toolWindow;
         this.contentFactory = contentFactory;
-        inti();
         this.apiService = APIManager.getAPI(project);
+        inti();
     }
 
     public void inti() {

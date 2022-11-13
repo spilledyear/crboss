@@ -41,6 +41,11 @@ public class APIManager {
         if (project == null) {
             return null;
         }
+
+        APIService apiService = API_CACHE.get(project);
+        if (apiService == null) {
+            registerAPI(project);
+        }
         return API_CACHE.get(project);
     }
 
