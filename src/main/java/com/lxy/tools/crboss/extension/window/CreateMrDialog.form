@@ -7,7 +7,6 @@
     </constraints>
     <properties/>
     <border type="bevel-raised">
-      <font/>
       <title-color color="-656134"/>
     </border>
     <children>

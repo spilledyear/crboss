@@ -36,8 +36,6 @@ public class MrMainWindow {
     private ToolWindow toolWindow;
     private ContentFactory contentFactory;
 
-    private APIService apiService;
-
     /**
      * MR列表
      */
@@ -51,7 +49,6 @@ public class MrMainWindow {
         this.project = project;
         this.toolWindow = toolWindow;
         this.contentFactory = contentFactory;
-        this.apiService = APIManager.getAPI(project);
         inti();
     }
 
@@ -161,7 +158,7 @@ public class MrMainWindow {
             mrListTable.updateUI();
 
             final String state = this.selectedMrState.toLowerCase();
-            List<MergeRequest> mergeRequests = Optional.ofNullable(this.apiService.getMergeRequests())
+            List<MergeRequest> mergeRequests = Optional.ofNullable(APIManager.getAPI(project).getMergeRequests())
                     .orElse(Collections.emptyList())
                     .stream()
                     .filter(v -> "ALL".equalsIgnoreCase(state) || state.equals(v.getState()))
@@ -172,7 +169,7 @@ public class MrMainWindow {
     }
 
     private void createMr(AnActionEvent e) {
-        CreateMrDialog dialog = new CreateMrDialog(this.apiService);
+        CreateMrDialog dialog = new CreateMrDialog(APIManager.getAPI(project));
         dialog.pack();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int w = (screenSize.width - 680) / 2;
