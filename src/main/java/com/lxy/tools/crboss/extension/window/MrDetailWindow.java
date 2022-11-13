@@ -2,7 +2,6 @@ package com.lxy.tools.crboss.extension.window;
 
 import com.intellij.ui.table.JBTable;
 import com.lxy.tools.crboss.model.MrInfo;
-import com.lxy.tools.crboss.service.GitAPI;
 import org.gitlab4j.api.models.MergeRequest;
 
 import javax.swing.*;
@@ -11,8 +10,10 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.*;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MrDetailWindow {
@@ -47,7 +48,7 @@ public class MrDetailWindow {
             }
         };
         new Thread(() -> {
-            List<MergeRequest> mergeRequests = GitAPI.getMergeRequests();
+            List<MergeRequest> mergeRequests = Collections.emptyList();
             Object[][] data = buildRowData(getMrList(mergeRequests));
             Optional.ofNullable(data).ifPresent(v -> Arrays.stream(v).forEach(tableModel::addRow));
         }).start();

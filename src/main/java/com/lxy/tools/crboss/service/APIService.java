@@ -7,26 +7,17 @@ import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.MergeRequest;
-import org.gitlab4j.api.models.Project;
 
 import java.util.Collections;
 import java.util.List;
 
-public class GitAPI {
-    private static GitLabApi API;
+public class APIService {
 
-    private static final String PROJECT_PATH = "duinfr/cloud/poizon-cloud";
+    private GitLabApi gitLabApi;
+    private int projectId;
 
-    private static int PROJECT_ID;
 
-    private static synchronized GitLabApi getInstance() {
-        if (API == null) {
-            new GitAPI();
-        }
-        return API;
-    }
-
-    private GitAPI() {
+    public APIService(String projectPath) {
         try {
             String gitlabUrl = CrBossPersistent.getInstance().getGitlabUrl();
             String gitlabToken = CrBossPersistent.getInstance().getGitlabToken();
@@ -34,35 +25,43 @@ public class GitAPI {
                 throw new RuntimeException("gitlabUrl 和 gitlabToken 不能为空！");
             }
 
-            API = new GitLabApi(gitlabUrl, gitlabToken);
-
-            Project project = API.getProjectApi().getProject(PROJECT_PATH, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
-            PROJECT_ID = project.getId();
+            GitLabApi gitLabApi = new GitLabApi(gitlabUrl, gitlabToken);
+            this.gitLabApi = gitLabApi;
+            this.projectId = gitLabApi.getProjectApi().getProject(projectPath, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE).getId();
         } catch (Exception e) {
-            API = null;
             System.err.println("error: " + e.getMessage());
         }
     }
 
-    public static List<MergeRequest> getMergeRequests() {
+    public void close() {
+        if (gitLabApi != null) {
+            gitLabApi.close();
+        }
+    }
+
+    public List<MergeRequest> getMergeRequests() {
         try {
-            return getInstance().getMergeRequestApi().getMergeRequests(PROJECT_ID);
+            return gitLabApi.getMergeRequestApi().getMergeRequests(projectId);
         } catch (Exception e) {
             System.err.println("getMergeRequests error: " + e.getMessage());
         }
         return Collections.emptyList();
     }
 
-    public static List<Branch> getBranches() {
+    public List<Branch> getBranches() {
         try {
-            return getInstance().getRepositoryApi().getBranches(PROJECT_ID);
+            return gitLabApi.getRepositoryApi().getBranches(projectId);
         } catch (Exception e) {
             System.err.println("error: " + e.getMessage());
         }
         return Collections.emptyList();
     }
 
-    public static MergeRequest createMergeRequest(CreateMrRequest request) throws GitLabApiException {
-        return getInstance().getMergeRequestApi().createMergeRequest(PROJECT_ID, request.getSource(), request.getTarget(), request.getTitle(), request.getDesc(), null);
+    public MergeRequest createMergeRequest(CreateMrRequest request) throws GitLabApiException {
+        return gitLabApi.getMergeRequestApi().createMergeRequest(projectId, request.getSource(), request.getTarget(), request.getTitle(), request.getDesc(), null);
+    }
+
+    public GitLabApi getGitLabApi() {
+        return gitLabApi;
     }
 }

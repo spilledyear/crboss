@@ -28,7 +28,7 @@
 
 
     <projectListeners>
-        <listener class="com.lxy.tools.crboss.listener.TokenSettingListener" topic="com.intellij.openapi.project.ProjectManagerListener"/>
+        <listener class="com.lxy.tools.crboss.listener.CrBossListener" topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </projectListeners>
 
     <!-- Extension points defined by the plugin.

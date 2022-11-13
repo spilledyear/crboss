@@ -22,8 +22,8 @@ public class CrBossConfiguration implements Configurable {
     private final JTextField urlTextField = new JTextField();
     private final JTextField tokenTextField = new JTextField();
 
-    private final static String URL_PLACEHOLDER = StringUtil.utf8("请输入Gitlab API URL");
-    private final static String TOKEN_PLACEHOLDER = StringUtil.utf8("请输入Gitlab API TOKEN");
+    public static final String URL_PLACEHOLDER = StringUtil.utf8("请输入Gitlab API URL");
+    public static final String TOKEN_PLACEHOLDER = StringUtil.utf8("请输入Gitlab API TOKEN");
 
 
     public CrBossConfiguration() {

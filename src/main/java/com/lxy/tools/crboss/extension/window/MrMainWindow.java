@@ -3,6 +3,7 @@ package com.lxy.tools.crboss.extension.window;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.AnActionButton;
@@ -10,7 +11,8 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.lxy.tools.crboss.model.MrInfo;
-import com.lxy.tools.crboss.service.GitAPI;
+import com.lxy.tools.crboss.service.APIManager;
+import com.lxy.tools.crboss.service.APIService;
 import org.gitlab4j.api.models.MergeRequest;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,8 +32,12 @@ public class MrMainWindow {
 
     private static final Map<Integer, Content> CONTENT_CACHE = new HashMap<>();
 
+    private Project project;
     private ToolWindow toolWindow;
     private ContentFactory contentFactory;
+
+    private APIService apiService;
+
     /**
      * MR列表
      */
@@ -41,10 +47,12 @@ public class MrMainWindow {
 
     private String selectedMrState = "ALL";
 
-    public MrMainWindow(ToolWindow toolWindow, ContentFactory contentFactory) {
+    public MrMainWindow(Project project, ToolWindow toolWindow, ContentFactory contentFactory) {
+        this.project = project;
         this.toolWindow = toolWindow;
         this.contentFactory = contentFactory;
         inti();
+        this.apiService = APIManager.getAPI(project);
     }
 
     public void inti() {
@@ -153,7 +161,7 @@ public class MrMainWindow {
             mrListTable.updateUI();
 
             final String state = this.selectedMrState.toLowerCase();
-            List<MergeRequest> mergeRequests = Optional.ofNullable(GitAPI.getMergeRequests())
+            List<MergeRequest> mergeRequests = Optional.ofNullable(this.apiService.getMergeRequests())
                     .orElse(Collections.emptyList())
                     .stream()
                     .filter(v -> "ALL".equalsIgnoreCase(state) || state.equals(v.getState()))
@@ -164,7 +172,7 @@ public class MrMainWindow {
     }
 
     private void createMr(AnActionEvent e) {
-        CreateMrDialog dialog = new CreateMrDialog();
+        CreateMrDialog dialog = new CreateMrDialog(this.apiService);
         dialog.pack();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int w = (screenSize.width - 680) / 2;

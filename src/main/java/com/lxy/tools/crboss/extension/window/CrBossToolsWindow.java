@@ -14,7 +14,7 @@ public class CrBossToolsWindow implements ToolWindowFactory {
         // ContentFactory 在 IntelliJ 平台 SDK 中负责 UI 界面的管理
         ContentFactory contentFactory = ContentFactory.getInstance();
 
-        MrMainWindow mainPanel = new MrMainWindow(toolWindow, contentFactory);
+        MrMainWindow mainPanel = new MrMainWindow(project, toolWindow, contentFactory);
 
         Content content = contentFactory.createContent(mainPanel.getListMainPanel(), "MrList", true);
         content.setCloseable(false);

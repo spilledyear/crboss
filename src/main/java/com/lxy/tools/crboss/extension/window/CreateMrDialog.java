@@ -3,7 +3,7 @@ package com.lxy.tools.crboss.extension.window;
 import com.intellij.openapi.ui.Messages;
 import com.lxy.tools.crboss.model.BranchInfo;
 import com.lxy.tools.crboss.model.CreateMrRequest;
-import com.lxy.tools.crboss.service.GitAPI;
+import com.lxy.tools.crboss.service.APIService;
 import com.lxy.tools.crboss.utils.StringUtil;
 import org.gitlab4j.api.models.MergeRequest;
 
@@ -31,10 +31,12 @@ public class CreateMrDialog extends JDialog {
     private JLabel targetLabel;
     private JComboBox targetBox;
 
-
+    private APIService apiService;
     private List<BranchInfo> branchInfos;
 
-    public CreateMrDialog() {
+
+    public CreateMrDialog(APIService apiService) {
+        this.apiService = apiService;
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -115,7 +117,7 @@ public class CreateMrDialog extends JDialog {
     }
 
     public static void main(String[] args) {
-        CreateMrDialog dialog = new CreateMrDialog();
+        CreateMrDialog dialog = new CreateMrDialog(null);
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
@@ -127,7 +129,7 @@ public class CreateMrDialog extends JDialog {
 
 
     private List<BranchInfo> getBranches() {
-        return Optional.ofNullable(GitAPI.getBranches())
+        return Optional.ofNullable(this.apiService.getBranches())
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(v -> {
@@ -143,7 +145,7 @@ public class CreateMrDialog extends JDialog {
 
     private MergeRequest createMergeRequest(CreateMrRequest request) {
         try {
-            return GitAPI.createMergeRequest(request);
+            return this.apiService.createMergeRequest(request);
         } catch (Exception e) {
             Messages.showErrorDialog(e.getMessage(), "创建Merge Request失败");
             throw new RuntimeException(e);
