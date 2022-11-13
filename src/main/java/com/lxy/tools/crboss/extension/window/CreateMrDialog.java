@@ -41,13 +41,7 @@ public class CreateMrDialog extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        new Thread(() -> {
-            this.branchInfos = getBranches();
-            Optional.ofNullable(this.branchInfos).orElse(Collections.emptyList()).forEach(v -> {
-                sourceBox.addItem(v.getName());
-                targetBox.addItem(v.getName());
-            });
-        }).start();
+        refreshData();
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -75,6 +69,20 @@ public class CreateMrDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+
+    private void refreshData() {
+        if (this.apiService == null) {
+            return;
+        }
+
+        new Thread(() -> {
+            this.branchInfos = getBranches();
+            Optional.ofNullable(this.branchInfos).orElse(Collections.emptyList()).forEach(v -> {
+                sourceBox.addItem(v.getName());
+                targetBox.addItem(v.getName());
+            });
+        }).start();
     }
 
     private void onOK() {
@@ -107,7 +115,6 @@ public class CreateMrDialog extends JDialog {
         if (sourceBox.getSelectedItem().toString().equals(targetBox.getSelectedItem().toString())) {
             return "原始分支和目标分支不能相同！";
         }
-
         return "";
     }
 
